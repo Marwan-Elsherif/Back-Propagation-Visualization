@@ -5,18 +5,18 @@ import numpy as np
 import sys
 
 
-class visualizeWindow(QWidget):
-    
+class VisualizeWindow(QWidget):
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Shallow NN Visualizer")
-        #self.setWindowIcon(QIcon("myapp.png"))
+        # self.setWindowIcon(QIcon("myapp.png"))
 
-        #self.setFixedHeight(1200)
-        #self.setFixedWidth(1500)
-        self.setGeometry(500,300,400,300)
+        # self.setFixedHeight(1200)
+        # self.setFixedWidth(1500)
+        self.setGeometry(500, 300, 400, 300)
 
-        #self.setStyleSheet('background-color:gray')
+        # self.setStyleSheet('background-color:gray')
         stylesheet = (
             'background-color:gray'
         )
@@ -25,15 +25,16 @@ class visualizeWindow(QWidget):
         self.create_widgets()
 
     def create_widgets(self):
-        # create a number of QlineEdits equal to the inputs 
+        # create a number of QlineEdits equal to the inputs
         numinputs = 5
-        self.lineEdits= [None] * int(numinputs)
+        self.lineEdits = [None] * int(numinputs)
         lineEditsVbox = QVBoxLayout()
         for index in range(numinputs):
-            self.lineEdits[index] = QLineEdit(self) # Make sure to set correct parent
+            # Make sure to set correct parent
+            self.lineEdits[index] = QLineEdit(self)
             # Use the line edit you just added
-            self.lineEdits[index].setFixedSize(200,25)
-            self.lineEdits[index].move(0,50*index) 
+            self.lineEdits[index].setFixedSize(200, 25)
+            self.lineEdits[index].move(0, 50*index)
             # group the input QlineEdits in a vertical layout
             lineEditsVbox.addWidget(self.lineEdits[index])
 
@@ -45,7 +46,7 @@ class visualizeWindow(QWidget):
 
         # Stylying Forward Prop. button
         fProp.setStyleSheet('background-color:white')
-        fProp.setFixedSize(200,25)
+        fProp.setFixedSize(200, 25)
 
         # Craeting Backward Prop. button
         bProp = QPushButton("Backward Prop.", self)
@@ -53,7 +54,7 @@ class visualizeWindow(QWidget):
 
         # Stylying Backward Prop.Backward Prop. button
         bProp.setStyleSheet('background-color:white')
-        bProp.setFixedSize(200,25)
+        bProp.setFixedSize(200, 25)
 
         # Craeting Update Werights button
         upWeights = QPushButton("Update Werights", self)
@@ -61,7 +62,7 @@ class visualizeWindow(QWidget):
 
         # Stylying Update Werights button
         upWeights.setStyleSheet('background-color:white')
-        upWeights.setFixedSize(200,25)
+        upWeights.setFixedSize(200, 25)
 
         # Craeting Test Inputs button
         testInputs = QPushButton("Test Inputs", self)
@@ -69,7 +70,7 @@ class visualizeWindow(QWidget):
 
         # Stylying Test Inputs button
         testInputs.setStyleSheet('background-color:white')
-        testInputs.setFixedSize(200,25)
+        testInputs.setFixedSize(200, 25)
 
         forBackVbox = QVBoxLayout()
         forBackVbox.addWidget(fProp)
@@ -85,23 +86,25 @@ class visualizeWindow(QWidget):
         inputNeuronsVbox = QVBoxLayout()
         for index in range(numinputs):
             self.inputNeuronLabel[index] = QLabel('', self)
-            self.inputNeuronLabel[index].setFixedSize(140,140)
-            self.inputNeuronLabel[index].setStyleSheet("border: 3px solid black;border-radius: 40px;background-color:blue")
+            self.inputNeuronLabel[index].setFixedSize(140, 140)
+            self.inputNeuronLabel[index].setStyleSheet(
+                "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.inputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
-            #self.inputNeuronLabel[index].setText()
+            # self.inputNeuronLabel[index].setText()
             inputNeuronsVbox.addWidget(self.inputNeuronLabel[index])
-        
+
         numhidden = 3
         self.hiddenNeuronLabel = [None] * int(numhidden)
         hiddenNeuronsVbox = QVBoxLayout()
         for index in range(numhidden):
             self.hiddenNeuronLabel[index] = QLabel('', self)
-            self.hiddenNeuronLabel[index].setFixedSize(140,140)
-            self.hiddenNeuronLabel[index].setStyleSheet("border: 3px solid black;border-radius: 40px;background-color:blue")
+            self.hiddenNeuronLabel[index].setFixedSize(140, 140)
+            self.hiddenNeuronLabel[index].setStyleSheet(
+                "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.hiddenNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
-            #self.hiddenNeuronLabel[index].setText()
+            # self.hiddenNeuronLabel[index].setText()
             hiddenNeuronsVbox.addWidget(self.hiddenNeuronLabel[index])
 
         numoutputs = 1
@@ -109,11 +112,12 @@ class visualizeWindow(QWidget):
         outputNeuronsVbox = QVBoxLayout()
         for index in range(numoutputs):
             self.outputNeuronLabel[index] = QLabel('', self)
-            self.outputNeuronLabel[index].setFixedSize(140,140)
-            self.outputNeuronLabel[index].setStyleSheet("border: 3px solid black;border-radius: 40px;background-color:blue")
+            self.outputNeuronLabel[index].setFixedSize(140, 140)
+            self.outputNeuronLabel[index].setStyleSheet(
+                "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.outputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
-            #self.outputNeuronLabel[index].setText()
+            # self.outputNeuronLabel[index].setText()
             outputNeuronsVbox.addWidget(self.outputNeuronLabel[index])
 
         overallGrid = QGridLayout()
@@ -125,15 +129,6 @@ class visualizeWindow(QWidget):
         overallGrid.addLayout(upTestVbox, 2, 2)
 
         self.setLayout(overallGrid)
-
-            
-        
-
-
-            
-        
-
-
 
     def clicked_fProp(self):
         # This function shall call the forward propagation function using the inputs and the selected weight init
@@ -155,14 +150,7 @@ class visualizeWindow(QWidget):
         pass
 
 
-
-
-
-
-
-
-
-app = QApplication([])
-Window = visualizeWindow()
-Window.show()
-sys.exit(app.exec())
+# app = QApplication([])
+# Window = VisualizeWindow()
+# Window.show()
+# sys.exit(app.exec())
