@@ -2,16 +2,17 @@ import numpy as np
 
 
 class ShallowNN(object):
-    def __init__(self, input_shape, hidden_layer, output_shape):
-        self.inputLayerSize = input_shape
-        self.hiddenLayerSize = hidden_layer
-        self.outputLayerSize = output_shape
+    def __init__(self, input_shape, hidden_layer, output_shape, lr, weight_init=None, hidden_act_fn=None, op_act_fn=None, optimizer=None):
+        self.inputLayerSize = int(input_shape) if input_shape != '' else 5
+        self.hiddenLayerSize = int(hidden_layer) if hidden_layer != '' else 3
+        self.outputLayerSize = int(output_shape) if output_shape != '' else 1
+        self.lr = float(lr) if lr != '' else 0.01
 
-        params = self.initialize_parameters(
-            input_shape, hidden_layer, output_shape)
+        self.params = self.initialize_parameters(
+            self.inputLayerSize, self.hiddenLayerSize, self.outputLayerSize)
 
         # tests
-        print(params)
+        print(self.params)
 
     def initialize_parameters(self, n_x, n_h, n_y):
         """
@@ -67,21 +68,6 @@ class ShallowNN(object):
         Z2 = np.dot(W2, A1) + b2
         yhat = self.sigmoid(Z2)
 
-        # self.z2 = np.dot(X, self.w1)
-        # # to calculate a2, the activation shall change according to the choice at main window
-        # if Window.hidActFnInputValue == "Sigmoid":
-        #     self.a2 = self.sigmoid(self.z2)
-        # elif Window.hidActFnInputValue == "Relu":
-        #     self.a2 = self.relu(self.z2)
-
-        # self.z3 = self.dot(self.a2, self.w2)
-
-        # # to calculate a2, the activation shall change according to the choice at main window
-        # if Window.outActFnInputValue == "Sigmoid":
-        #     yhat = self.sigmoid(self.z3)
-        # elif Window.outActFnInputValue == "Relu":
-        #     yhat = self.relu(self.z3)
-
         # Values needed in the backpropagation are stored in "cache". This will be given as an input to the backpropagation
         cache = {"Z1": Z1,
                  "A1": A1,
@@ -119,7 +105,7 @@ class ShallowNN(object):
         Returns:
         grads -- python dictionary containing your gradients with respect to different parameters
         """
-        m = X.shape[1]
+        m = 1
 
         # First, retrieve W1 and W2 from the dictionary "parameters".
         W1 = parameters["W1"]

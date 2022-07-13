@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit
 from PyQt5.QtGui import QIcon, QFont, QDoubleValidator, QValidator
 from VisualizeWindow import VisualizeWindow
+from ShallowNN import ShallowNN
 
 
 class Window(QWidget):
@@ -210,6 +211,8 @@ class Window(QWidget):
         print(self.hidNumInputValue)
         print(self.outNumInputValue)
 
+        shallow_network = ShallowNN(
+            self.inNumInputValue, self.hidNumInputValue, self.outNumInputValue, self.iRateInputValue)
         # Open Second Window to Visualize the NN
-        self.vis_window = VisualizeWindow()
+        self.vis_window = VisualizeWindow(shallow_network)
         self.vis_window.show()

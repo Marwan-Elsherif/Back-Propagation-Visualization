@@ -7,7 +7,7 @@ import sys
 
 class VisualizeWindow(QWidget):
 
-    def __init__(self):
+    def __init__(self, shallow_network):
         super().__init__()
         self.setWindowTitle("Shallow NN Visualizer")
         # self.setWindowIcon(QIcon("myapp.png"))
@@ -21,14 +21,21 @@ class VisualizeWindow(QWidget):
             'background-color:gray'
         )
         self.setStyleSheet(stylesheet)
-
+        self.shallow_network = shallow_network
         self.create_widgets()
+        self.cache = None
+        self.grads = None
+
+        print("shallow_network: ", shallow_network.inputLayerSize)
 
     def create_widgets(self):
         # create a number of QlineEdits equal to the inputs
-        numinputs = 5
+        numinputs = self.shallow_network.inputLayerSize
         self.lineEdits = [None] * int(numinputs)
         lineEditsVbox = QVBoxLayout()
+        x_header = QLabel("Inputs")
+        x_header.setFixedSize(50, 50)
+        lineEditsVbox.addWidget(x_header)
         for index in range(numinputs):
             # Make sure to set correct parent
             self.lineEdits[index] = QLineEdit(self)
@@ -37,6 +44,20 @@ class VisualizeWindow(QWidget):
             self.lineEdits[index].move(0, 50*index)
             # group the input QlineEdits in a vertical layout
             lineEditsVbox.addWidget(self.lineEdits[index])
+
+        self.ylineEdits = [None] * int(numinputs)
+        ylineEditsVbox = QVBoxLayout()
+        y_header = QLabel("True Ys")
+        y_header.setFixedSize(50, 50)
+        ylineEditsVbox.addWidget(y_header)
+        for index in range(numinputs):
+            # Make sure to set correct parent
+            self.ylineEdits[index] = QLineEdit(self)
+            # Use the line edit you just added
+            self.ylineEdits[index].setFixedSize(200, 25)
+            self.ylineEdits[index].move(0, 50*index)
+            # group the input QlineEdits in a vertical layout
+            ylineEditsVbox.addWidget(self.ylineEdits[index])
 
         # Craete the 4 buttons we need "Forward Prop.", "Backward Prop.", "Update Werights" and "Test Inputs"
 
@@ -81,7 +102,7 @@ class VisualizeWindow(QWidget):
         upTestVbox.addWidget(testInputs)
 
         # Dynamic craetion of NN with changing text on labels of each circle
-        numinputs = 5
+        # numinputs = 5
         self.inputNeuronLabel = [None] * int(numinputs)
         inputNeuronsVbox = QVBoxLayout()
         for index in range(numinputs):
@@ -94,7 +115,7 @@ class VisualizeWindow(QWidget):
             # self.inputNeuronLabel[index].setText()
             inputNeuronsVbox.addWidget(self.inputNeuronLabel[index])
 
-        numhidden = 3
+        numhidden = self.shallow_network.hiddenLayerSize
         self.hiddenNeuronLabel = [None] * int(numhidden)
         hiddenNeuronsVbox = QVBoxLayout()
         for index in range(numhidden):
@@ -107,7 +128,7 @@ class VisualizeWindow(QWidget):
             # self.hiddenNeuronLabel[index].setText()
             hiddenNeuronsVbox.addWidget(self.hiddenNeuronLabel[index])
 
-        numoutputs = 1
+        numoutputs = self.shallow_network.outputLayerSize
         self.outputNeuronLabel = [None] * int(numoutputs)
         outputNeuronsVbox = QVBoxLayout()
         for index in range(numoutputs):
@@ -122,23 +143,52 @@ class VisualizeWindow(QWidget):
 
         overallGrid = QGridLayout()
         overallGrid.addLayout(lineEditsVbox, 0, 0)
-        overallGrid.addLayout(inputNeuronsVbox, 0, 1)
-        overallGrid.addLayout(hiddenNeuronsVbox, 0, 2)
-        overallGrid.addLayout(outputNeuronsVbox, 0, 3)
+        overallGrid.addLayout(ylineEditsVbox, 0, 1)
+        overallGrid.addLayout(inputNeuronsVbox, 0, 2)
+        overallGrid.addLayout(hiddenNeuronsVbox, 0, 3)
+        overallGrid.addLayout(outputNeuronsVbox, 0, 4)
         overallGrid.addLayout(forBackVbox, 2, 0)
-        overallGrid.addLayout(upTestVbox, 2, 2)
+        overallGrid.addLayout(upTestVbox, 2, 1)
 
         self.setLayout(overallGrid)
 
     def clicked_fProp(self):
         # This function shall call the forward propagation function using the inputs and the selected weight init
         # Also will show the value of a and z above each node in the NN
-        pass
+        X = self.get_X()
+        yhat, cache = self.shallow_network.forward_propagation(
+            X, self.shallow_network.params)
+
+        self.cache = cache
+        # print(X.T)
+        # print(cache)
+        # print(cache['A1'])
+        A1 = cache['A1']
+        for index in range(self.shallow_network.inputLayerSize):
+            self.inputNeuronLabel[index].setText(str(X[index]))
+
+        for index in range(self.shallow_network.hiddenLayerSize):
+            self.hiddenNeuronLabel[index].setText(str(A1[0][index]))
+
+        for index in range(self.shallow_network.outputLayerSize):
+            self.outputNeuronLabel[index].setText(str(yhat[0][index]))
 
     def clicked_bProp(self):
         # This function shall call the backward propagation function
         # Also will show the value of the derivative below each node in the NN
-        pass
+        X = self.get_X()
+        Y = self.get_true_Y()
+        self.grads = self.shallow_network.backward_propagation(
+            self.shallow_network.params, self.cache, X, Y)
+        print(self.grads)
+        # for index in range(self.shallow_network.inputLayerSize):
+        #     self.inputNeuronLabel[index].setText(str(X[index]))
+
+        # for index in range(self.shallow_network.hiddenLayerSize):
+        #     self.hiddenNeuronLabel[index].setText(str(A1[0][index]))
+
+        # for index in range(self.shallow_network.outputLayerSize):
+        # self.outputNeuronLabel[index].setText(str(yhat[0][index]))
 
     def clicked_upWeights(self):
         # This function shall update the weigts shown above the arrows with the new weights after back Prop
@@ -149,8 +199,14 @@ class VisualizeWindow(QWidget):
         # and just show the output
         pass
 
+    def get_X(self):
+        ip_array = []
+        for index in range(self.shallow_network.inputLayerSize):
+            ip_array.append(float(self.lineEdits[index].text()))
+        return np.array(ip_array)
 
-# app = QApplication([])
-# Window = VisualizeWindow()
-# Window.show()
-# sys.exit(app.exec())
+    def get_true_Y(self):
+        ip_array = []
+        for index in range(self.shallow_network.inputLayerSize):
+            ip_array.append(float(self.ylineEdits[index].text()))
+        return np.array(ip_array)
