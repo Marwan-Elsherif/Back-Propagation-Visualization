@@ -207,9 +207,6 @@ class Window(QWidget):
 
         # Tests
         print("The visualize button is clicked")
-        print(self.inNumInputValue)
-        print(self.hidNumInputValue)
-        print(self.outNumInputValue)
 
         shallow_network = ShallowNN(
             self.inNumInputValue, self.hidNumInputValue, self.outNumInputValue, self.iRateInputValue)

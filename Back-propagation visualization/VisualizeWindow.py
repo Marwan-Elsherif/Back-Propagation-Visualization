@@ -26,8 +26,6 @@ class VisualizeWindow(QWidget):
         self.cache = None
         self.grads = None
 
-        print("shallow_network: ", shallow_network.inputLayerSize)
-
     def create_widgets(self):
         # create a number of QlineEdits equal to the inputs
         numinputs = self.shallow_network.inputLayerSize
@@ -50,7 +48,7 @@ class VisualizeWindow(QWidget):
         y_header = QLabel("True Ys")
         y_header.setFixedSize(50, 50)
         ylineEditsVbox.addWidget(y_header)
-        for index in range(numinputs):
+        for index in range(1):
             # Make sure to set correct parent
             self.ylineEdits[index] = QLineEdit(self)
             # Use the line edit you just added
@@ -160,24 +158,22 @@ class VisualizeWindow(QWidget):
             X, self.shallow_network.params)
 
         self.cache = cache
-        # print(X.T)
-        # print(cache)
-        # print(cache['A1'])
         A1 = cache['A1']
         for index in range(self.shallow_network.inputLayerSize):
-            self.inputNeuronLabel[index].setText(str(X[index]))
+            self.inputNeuronLabel[index].setText(str(X[index][0]))
 
         for index in range(self.shallow_network.hiddenLayerSize):
-            self.hiddenNeuronLabel[index].setText(str(A1[0][index]))
+            self.hiddenNeuronLabel[index].setText(str(A1[index][0]))
 
         for index in range(self.shallow_network.outputLayerSize):
-            self.outputNeuronLabel[index].setText(str(yhat[0][index]))
+            self.outputNeuronLabel[index].setText(str(yhat[index][0]))
 
     def clicked_bProp(self):
         # This function shall call the backward propagation function
         # Also will show the value of the derivative below each node in the NN
         X = self.get_X()
         Y = self.get_true_Y()
+        print(Y)
         self.grads = self.shallow_network.backward_propagation(
             self.shallow_network.params, self.cache, X, Y)
         print(self.grads)
@@ -192,7 +188,10 @@ class VisualizeWindow(QWidget):
 
     def clicked_upWeights(self):
         # This function shall update the weigts shown above the arrows with the new weights after back Prop
-        pass
+        print(self.shallow_network.params)
+        self.shallow_network.params = self.shallow_network.update_parameters(
+            self.shallow_network.params, self.grads)
+        print(self.shallow_network.params)
 
     def clicked_testInputs(self):
         # This function will just call the forward propagation function on the inputs using the new weights
@@ -200,13 +199,14 @@ class VisualizeWindow(QWidget):
         pass
 
     def get_X(self):
-        ip_array = []
+        ip_array = np.zeros(shape=(self.shallow_network.inputLayerSize, 1))
         for index in range(self.shallow_network.inputLayerSize):
-            ip_array.append(float(self.lineEdits[index].text()))
-        return np.array(ip_array)
+            ip_array[index] = float(self.lineEdits[index].text())
+        return ip_array
 
     def get_true_Y(self):
-        ip_array = []
-        for index in range(self.shallow_network.inputLayerSize):
-            ip_array.append(float(self.ylineEdits[index].text()))
-        return np.array(ip_array)
+        ip_array = np.zeros(shape=(1, 1))
+        for index in range(1):
+            ip_array[index] = float(self.ylineEdits[index].text())
+        print(ip_array)
+        return ip_array

@@ -1,3 +1,4 @@
+from operator import le
 import numpy as np
 
 
@@ -62,7 +63,6 @@ class ShallowNN(object):
         b2 = parameters["b2"]
 
         # Implement Forward Propagation to calculate A2 (probabilities)
-
         Z1 = np.dot(W1, X) + b1
         A1 = np.tanh(Z1)
         Z2 = np.dot(W2, A1) + b2
@@ -115,8 +115,13 @@ class ShallowNN(object):
         A1 = cache["A1"]
         A2 = cache["A2"]
 
+        print(cache)
+        print(A2.shape)
+        print(Y)
+        print(Y.shape)
         # Backward propagation: calculate dW1, db1, dW2, db2.
         dZ2 = A2 - Y
+        print(dZ2.shape)
         dW2 = (1/m) * np.dot(dZ2, A1.T)
         db2 = (1/m) * (np.sum(dZ2, axis=1, keepdims=True))
         dZ1 = np.dot(W2.T, dZ2) * (1 - np.power(A1, 2))
@@ -130,7 +135,7 @@ class ShallowNN(object):
 
         return grads
 
-    def update_parameters(self, parameters, grads, learning_rate):
+    def update_parameters(self, parameters, grads, learning_rate=None):
         """
         Updates parameters using the gradient descent update
 
@@ -141,6 +146,8 @@ class ShallowNN(object):
         Returns:
         parameters -- python dictionary containing your updated parameters 
         """
+        if learning_rate is None:
+            learning_rate = self.lr
         # Retrieve each parameter from the dictionary "parameters"
         W1 = parameters["W1"]
         b1 = parameters["b1"]
