@@ -140,63 +140,58 @@ class VisualizeWindow(QWidget):
             outputNeuronsVbox.addWidget(self.outputNeuronLabel[index])
 
         # Craeting tables to show the values of the weights and the gradients 
-        # Get the parameters to be shown in tables
-        self.parameters = self.shallow_network.initialize_parameters(
-            self.shallow_network.inputLayerSize, self.shallow_network.hiddenLayerSize, 
-                self.shallow_network.outputLayerSize, self.shallow_network.init_weight_type)
 
-        # First table to show the weights between the input layer and the hidden layer 
-        in_hid_weights_table = QTableWidget()
-        in_hid_weights_table.setRowCount(int(numinputs))
-        in_hid_weights_table.setColumnCount(int(numhidden))
-        
-        # Loop the first table and insert the values of the weights (W1)
-        self.W1 = self.parameters["W1"]
-        in_hid_weights_table_label = QLabel("Weights between hidden layer and input layer")
-        in_hid_weights_table_label.setFixedSize(500, 50)
-        for row in range(numhidden):
-            print("The row is " + str(row))
-            for col in range(numinputs):
-                in_hid_weights_table.setItem(col, row, QTableWidgetItem(str(self.W1[row][col])))
-                print("The col is " + str(col))
-        table_1_label_layout = QVBoxLayout()
-        table_1_label_layout.addWidget(in_hid_weights_table_label)
-        table_1_label_layout.addWidget(in_hid_weights_table)
-        
+        # First empty table to show the weights
+        weights_table = QTableWidget()
+        weight_table_row_size = (numhidden * numinputs) + (numoutputs * numhidden)
+        weights_table.setRowCount(int(weight_table_row_size))
+        weights_table.setColumnCount(3)
+        weights_table_label = QLabel("Weights (W1) and (W2)")
+        weights_table_label.setFixedSize(500, 50)
 
-        # Second table to show the weights between the hidden layer and the output layer
-        hid_out_weights_table = QTableWidget()
-        hid_out_weights_table.setRowCount(int(numhidden))
-        hid_out_weights_table.setColumnCount(int(numoutputs))
+        # Change the headers of columns in weights table
+        weights_headers = ["From", "To", "W"]
+        for col in range(3):
+            hitem = QTableWidgetItem()
+            hitem.setText(weights_headers[col])
+            weights_table.setHorizontalHeaderItem(col, hitem)
 
-        # Loop the second table and insert the values of the weights (W2)
+        # Filling the "From" and "To" columns inside the weights table
+        for col in range(2):
+            for row in range(weight_table_row_size):
+                item = QTableWidgetItem()
+                # item.setText("N" + )
+                # weights_table.setItem(col, row, item)
+                pass 
 
+        # Grouping the label and the weights table into a vertical layout
+        weights_label_table_layout = QVBoxLayout()
+        weights_label_table_layout.addWidget(weights_table_label)
+        weights_label_table_layout.addWidget(weights_table)
 
+        # Second table to show the gradients     
+        gradients_table = QTableWidget()
+        gradients_table.setRowCount(int(weight_table_row_size))
+        gradients_table.setColumnCount(int(3))
+        gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
+        gradients_table_label.setFixedSize(500, 50)
 
-        # Third table to show the gradients between the output layer and the hidden layer         
-        out_hid_gradients_table = QTableWidget()
-        out_hid_gradients_table.setRowCount(int(numoutputs))
-        out_hid_gradients_table.setColumnCount(int(numhidden))
+        # Change the headers of columns in gradients table
+        gradients_headers = ["From", "To", "dW"]
+        for col in range(3):
+            hitem = QTableWidgetItem()
+            hitem.setText(gradients_headers[col])
+            gradients_table.setHorizontalHeaderItem(col, hitem)
 
-        # Loop the third table and insert the values of the Gradients
-
-
-
-        # Fourth table to show the weights between the hidden layer and the input layer
-        hid_in_gradients_table = QTableWidget()
-        hid_in_gradients_table.setRowCount(int(numhidden))
-        hid_in_gradients_table.setColumnCount(int(numinputs))
-
-        # Loop the fourth table and insert the values of the gradients
-
-
+        # Grouping the label and the gradients table into a vertical layout
+        gradients_label_table_layout = QVBoxLayout()
+        gradients_label_table_layout.addWidget(gradients_table_label)
+        gradients_label_table_layout.addWidget(gradients_table)
 
         # Putting all the tables created in a horizontal layout
         tablesHLayout = QHBoxLayout()
-        tablesHLayout.addLayout(table_1_label_layout)
-        tablesHLayout.addWidget(hid_out_weights_table)
-        tablesHLayout.addWidget(out_hid_gradients_table)
-        tablesHLayout.addWidget(hid_in_gradients_table)
+        tablesHLayout.addLayout(weights_label_table_layout)
+        tablesHLayout.addLayout(gradients_label_table_layout)
 
 
         # Making a horizontal layout for the upper half of the screen
