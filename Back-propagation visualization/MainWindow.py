@@ -117,7 +117,7 @@ class Window(QWidget):
         # Creating needed comboboxes for choosing a string value from many
         self.wInitInput = QComboBox(self)
         self.wInitInput.addItem("zeros")
-        self.wInitInput.addItem("small values")
+        self.wInitInput.addItem("small random values")
         self.hidActFnInput = QComboBox(self)
         self.hidActFnInput.addItem("RELU")
         self.hidActFnInput.addItem("Sigmoid")

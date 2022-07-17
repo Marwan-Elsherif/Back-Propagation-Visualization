@@ -155,7 +155,7 @@ class VisualizeWindow(QWidget):
         # Also will show the value of a and z above each node in the NN
         X = self.get_X()
         yhat, cache = self.shallow_network.forward_propagation(
-            X, self.shallow_network.params)
+            X, self.shallow_network.params, self.shallow_network.hidden_act_type, self.shallow_network.op_act_type)
 
         self.cache = cache
         A1 = cache['A1']

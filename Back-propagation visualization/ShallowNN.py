@@ -3,19 +3,23 @@ import numpy as np
 
 
 class ShallowNN(object):
-    def __init__(self, input_shape, hidden_layer, output_shape, lr, weight_init=None, hidden_act_fn=None, op_act_fn=None, optimizer=None):
+    def __init__(self, input_shape, hidden_layer, output_shape, lr, weight_init, hidden_act_fn, op_act_fn, optimizer):
         self.inputLayerSize = int(input_shape) if input_shape != '' else 5
         self.hiddenLayerSize = int(hidden_layer) if hidden_layer != '' else 3
         self.outputLayerSize = int(output_shape) if output_shape != '' else 1
         self.lr = float(lr) if lr != '' else 0.01
+        self.init_weight_type = str(weight_init)
+        self.hidden_act_type = str(hidden_act_fn)
+        self.op_act_type = str(op_act_fn)
+        self.optimizer_type = str(optimizer)
 
         self.params = self.initialize_parameters(
-            self.inputLayerSize, self.hiddenLayerSize, self.outputLayerSize)
+            self.inputLayerSize, self.hiddenLayerSize, self.outputLayerSize, self.init_weight_type)
 
         # tests
         print(self.params)
 
-    def initialize_parameters(self, n_x, n_h, n_y):
+    def initialize_parameters(self, n_x, n_h, n_y, init_weight_type):
         """
         Argument:
         n_x -- size of the input layer
@@ -33,9 +37,14 @@ class ShallowNN(object):
         # we set up a seed so that your output matches ours although the initialization is random.
         np.random.seed(2)
 
-        W1 = np.random.randn(n_h, n_x) * 0.01
+        if init_weight_type == "zeros":
+            W1 = np.zeros((n_h, n_x))
+            W2 = np.zeros((n_y, n_h))
+        elif init_weight_type  == "small random values":
+            W1 = np.random.randn(n_h, n_x) * 0.01
+            W2 = np.random.randn(n_y, n_h) * 0.01
+        
         b1 = np.zeros((n_h, 1))
-        W2 = np.random.randn(n_y, n_h) * 0.01
         b2 = np.zeros((n_y, 1))
 
         parameters = {"W1": W1,
@@ -45,7 +54,7 @@ class ShallowNN(object):
 
         return parameters
 
-    def forward_propagation(self, X, parameters):
+    def forward_propagation(self, X, parameters, hidden_act_type, op_act_type):
         """
         Argument:
         X -- input data of size (n_x, m)
@@ -64,9 +73,23 @@ class ShallowNN(object):
 
         # Implement Forward Propagation to calculate A2 (probabilities)
         Z1 = np.dot(W1, X) + b1
-        A1 = np.tanh(Z1)
+
+        if hidden_act_type == "RELU":
+            A1 = self.relu(Z1)
+        elif hidden_act_type == "Sigmoid":
+            A1 = self.sigmoid(Z1)
+        elif hidden_act_type == "Tanh":
+            A1 = np.tanh(Z1)
+        
         Z2 = np.dot(W2, A1) + b2
-        yhat = self.sigmoid(Z2)
+
+        if op_act_type == "RELU":
+            yhat = self.relu(Z2)
+        elif op_act_type == "Sigmoid":
+            yhat = self.sigmoid(Z2)
+        elif op_act_type == "Tanh":
+            yhat = np.tanh(Z2)
+        
 
         # Values needed in the backpropagation are stored in "cache". This will be given as an input to the backpropagation
         cache = {"Z1": Z1,
@@ -80,8 +103,7 @@ class ShallowNN(object):
         return 1/(1 + np.exp(-Z))
 
     def relu(self, Z):
-        data = [max(0, value) for value in Z]
-        return np.array(data, dtype=float)
+        return np.maximum(0,Z)
 
     def get_cost(self, A2, Y):
         """
@@ -184,7 +206,7 @@ class ShallowNN(object):
         # Loop (gradient descent)
         for i in range(0, num_iterations):
             # Forward propagation. Inputs: "X, parameters". Outputs: "A2, cache"
-            A2, cache = self.forward_propagation(X, parameters)
+            A2, cache = self.forward_propagation(X, parameters ,self.hidden_act_type, self.op_act_type)
             # Cost function. Inputs: "A2, Y, parameters". Outputs: "cost"
             cost = self.get_cost(A2, Y)
             # Backpropagation. Inputs: "parameters, cache, X, Y". Outputs: "grads"
