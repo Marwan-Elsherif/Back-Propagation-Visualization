@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QComboBox
 from PyQt5.QtGui import QIcon, QFont, QDoubleValidator, QValidator
 from VisualizeWindow import VisualizeWindow
 from ShallowNN import ShallowNN
@@ -108,19 +108,29 @@ class Window(QWidget):
         labelsVbox.addWidget(outActFn)
         labelsVbox.addWidget(optimizer)
 
-        # self.setLayout(labelsVbox)
-
-        # Creating needed LineEdits and scroll bars
+        # Creating needed LineEdits
         self.inNumInput = QLineEdit(self)
         self.hidNumInput = QLineEdit(self)
         self.outNumInput = QLineEdit(self)
         self.iRateInput = QLineEdit(self)
-        self.wInitInput = QLineEdit(self)
-        self.hidActFnInput = QLineEdit(self)
-        self.outActFnInput = QLineEdit(self)
-        self.optimizerInput = QLineEdit(self)
 
-        # Styiling LineEdits and scroll bars
+        # Creating needed comboboxes for choosing a string value from many
+        self.wInitInput = QComboBox(self)
+        self.wInitInput.addItem("zeros")
+        self.wInitInput.addItem("small values")
+        self.hidActFnInput = QComboBox(self)
+        self.hidActFnInput.addItem("RELU")
+        self.hidActFnInput.addItem("Sigmoid")
+        self.hidActFnInput.addItem("Tanh")
+        self.outActFnInput = QComboBox(self)
+        self.outActFnInput.addItem("RELU")
+        self.outActFnInput.addItem("Sigmoid")
+        self.outActFnInput.addItem("Tanh")
+        self.optimizerInput = QComboBox(self)
+        self.optimizerInput.addItem("SGD")
+        self.optimizerInput.addItem("ADAM")
+
+        # Styiling LineEdits and comboxes
         self.inNumInput.setStyleSheet('color:black')
         self.inNumInput.setFixedSize(200, 25)
 
@@ -133,16 +143,16 @@ class Window(QWidget):
         self.iRateInput.setStyleSheet('color:black')
         self.iRateInput.setFixedSize(200, 25)
 
-        self.wInitInput.setStyleSheet('color:black')
+        self.wInitInput.setStyleSheet('color:white')
         self.wInitInput.setFixedSize(200, 25)
 
-        self.hidActFnInput.setStyleSheet('color:black')
+        self.hidActFnInput.setStyleSheet('color:white')
         self.hidActFnInput.setFixedSize(200, 25)
 
-        self.outActFnInput.setStyleSheet('color:black')
+        self.outActFnInput.setStyleSheet('color:white')
         self.outActFnInput.setFixedSize(200, 25)
 
-        self.optimizerInput.setStyleSheet('color:black')
+        self.optimizerInput.setStyleSheet('color:white')
         self.optimizerInput.setFixedSize(200, 25)
 
         # Grouping LineEdits and scroll bars into a Layout
@@ -198,18 +208,22 @@ class Window(QWidget):
         self.hidNumInputValue = self.hidNumInput.text()
         self.outNumInputValue = self.outNumInput.text()
         self.iRateInputValue = self.iRateInput.text()
-        self.wInitInputValue = self.wInitInput.text()
-        self.hidActFnInputValue = self.hidActFnInput.text()
-        self.outActFnInputValue = self.outActFnInput.text()
-        self.optimizerInputValue = self.optimizerInput.text()
+        self.wInitInputValue = self.wInitInput.currentText()
+        self.hidActFnInputValue = self.hidActFnInput.currentText()
+        self.outActFnInputValue = self.outActFnInput.currentText()
+        self.optimizerInputValue = self.optimizerInput.currentText()
 
         # Then move to the next window with the needed NN drawn
 
         # Tests
         print("The visualize button is clicked")
+        print(self.inNumInputValue + ", " + self.hidNumInputValue + ", " + self.outNumInputValue + ", ")
+        print(self.iRateInputValue + ", " + self.wInitInputValue + ", " +  self.hidActFnInputValue + ", ")
+        print(self.outActFnInputValue + ", " + self.optimizerInputValue + ", ")
 
         shallow_network = ShallowNN(
-            self.inNumInputValue, self.hidNumInputValue, self.outNumInputValue, self.iRateInputValue)
+            self.inNumInputValue, self.hidNumInputValue, self.outNumInputValue, self.iRateInputValue, self.wInitInputValue,
+                self.hidActFnInputValue, self.outActFnInputValue, self.optimizerInputValue)
         # Open Second Window to Visualize the NN
         self.vis_window = VisualizeWindow(shallow_network)
         self.vis_window.show()
