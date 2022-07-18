@@ -22,9 +22,11 @@ class VisualizeWindow(QWidget):
         )
         self.setStyleSheet(stylesheet)
         self.shallow_network = shallow_network
-        self.create_widgets()
+        self.weights_table = QTableWidget()
+        self.gradients_table = QTableWidget()
         self.cache = None
         self.grads = None
+        self.create_widgets()
 
     def create_widgets(self):
         # create a number of QlineEdits equal to the inputs
@@ -99,6 +101,9 @@ class VisualizeWindow(QWidget):
         upTestVbox.addWidget(upWeights)
         upTestVbox.addWidget(testInputs)
 
+        ip_neurons_names = []
+        hidden_neurons_names = []
+        op_neurons_names = []
         # Dynamic craetion of NN with changing text on labels of each circle
         # numinputs = 5
         self.inputNeuronLabel = [None] * int(numinputs)
@@ -109,6 +114,8 @@ class VisualizeWindow(QWidget):
             self.inputNeuronLabel[index].setStyleSheet(
                 "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.inputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
+            self.inputNeuronLabel[index].setText("N1"+str(index+1))
+            ip_neurons_names.append("N1"+str(index+1))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
             # self.inputNeuronLabel[index].setText()
             inputNeuronsVbox.addWidget(self.inputNeuronLabel[index])
@@ -122,6 +129,8 @@ class VisualizeWindow(QWidget):
             self.hiddenNeuronLabel[index].setStyleSheet(
                 "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.hiddenNeuronLabel[index].setFont(QFont("Times New Roman", 12))
+            self.hiddenNeuronLabel[index].setText("N2"+str(index+1))
+            hidden_neurons_names.append("N2"+str(index+1))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
             # self.hiddenNeuronLabel[index].setText()
             hiddenNeuronsVbox.addWidget(self.hiddenNeuronLabel[index])
@@ -135,64 +144,109 @@ class VisualizeWindow(QWidget):
             self.outputNeuronLabel[index].setStyleSheet(
                 "border: 3px solid black;border-radius: 40px;background-color:blue")
             self.outputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
+            self.outputNeuronLabel[index].setText("N3"+str(index+1))
+            op_neurons_names.append("N3"+str(index+1))
             # Change the label of the Nueron according to the stage (i.e: display A and Z or der or fired/notfired)
             # self.outputNeuronLabel[index].setText()
             outputNeuronsVbox.addWidget(self.outputNeuronLabel[index])
 
-        # Craeting tables to show the values of the weights and the gradients 
+        # Craeting tables to show the values of the weights and the gradients
 
         # First empty table to show the weights
-        weights_table = QTableWidget()
-        weight_table_row_size = (numhidden * numinputs) + (numoutputs * numhidden)
-        weights_table.setRowCount(int(weight_table_row_size))
-        weights_table.setColumnCount(3)
-        weights_table_label = QLabel("Weights (W1) and (W2)")
-        weights_table_label.setFixedSize(500, 50)
+        # self.weights_table = QTableWidget()
+        weight_table_row_size = (numhidden * numinputs) + \
+            (numoutputs * numhidden)
+        self.weights_table.setRowCount(int(weight_table_row_size))
+        self.weights_table.setColumnCount(3)
+        self.weights_table_label = QLabel("Weights (W1) and (W2)")
+        self.weights_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in weights table
         weights_headers = ["From", "To", "W"]
         for col in range(3):
             hitem = QTableWidgetItem()
             hitem.setText(weights_headers[col])
-            weights_table.setHorizontalHeaderItem(col, hitem)
+            self.weights_table.setHorizontalHeaderItem(col, hitem)
 
-        # Filling the "From" and "To" columns inside the weights table
-        for col in range(2):
-            for row in range(weight_table_row_size):
-                item = QTableWidgetItem()
-                # item.setText("N" + )
-                # weights_table.setItem(col, row, item)
-                pass 
+        from_l = []
+        to_l = []
+        for ip_node in ip_neurons_names:
+            for hidden_node in hidden_neurons_names:
+                from_l.append(ip_node)
+                to_l.append(hidden_node)
+
+        for hidden_node in hidden_neurons_names:
+            for op_node in op_neurons_names:
+                from_l.append(hidden_node)
+                to_l.append(op_node)
+
+        from_l_grads = []
+        to_l_grads = []
+        print(weight_table_row_size)
+        for op_node in op_neurons_names:
+            for hidden_node in hidden_neurons_names:
+                from_l_grads.append(op_node)
+                to_l_grads.append(hidden_node)
+
+        for hidden_node in hidden_neurons_names:
+            for ip_node in ip_neurons_names:
+                from_l_grads.append(hidden_node)
+                to_l_grads.append(ip_node)
 
         # Grouping the label and the weights table into a vertical layout
         weights_label_table_layout = QVBoxLayout()
-        weights_label_table_layout.addWidget(weights_table_label)
-        weights_label_table_layout.addWidget(weights_table)
+        weights_label_table_layout.addWidget(self.weights_table_label)
+        weights_label_table_layout.addWidget(self.weights_table)
 
-        # Second table to show the gradients     
-        gradients_table = QTableWidget()
-        gradients_table.setRowCount(int(weight_table_row_size))
-        gradients_table.setColumnCount(int(3))
-        gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
-        gradients_table_label.setFixedSize(500, 50)
+        # Second table to show the gradients
+        # self.gradients_table = QTableWidget()
+        self.gradients_table.setRowCount(int(weight_table_row_size))
+        self.gradients_table.setColumnCount(int(3))
+        self.gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
+        self.gradients_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in gradients table
         gradients_headers = ["From", "To", "dW"]
         for col in range(3):
             hitem = QTableWidgetItem()
             hitem.setText(gradients_headers[col])
-            gradients_table.setHorizontalHeaderItem(col, hitem)
+            self.gradients_table.setHorizontalHeaderItem(col, hitem)
+
+        init_weights = list(self.shallow_network.params['W1'].flat) + \
+            list(self.shallow_network.params['W2'].flat)
+        print(init_weights)
+        # Filling the "From" and "To" columns inside the weights table
+        for row in range(weight_table_row_size):
+
+            from_item_weight = QTableWidgetItem()
+            from_item_weight.setText(from_l[row])
+            self.weights_table.setItem(row, 0, from_item_weight)
+
+            from_item_grad = QTableWidgetItem()
+            from_item_grad.setText(from_l_grads[row])
+            self.gradients_table.setItem(row, 0, from_item_grad)
+
+            to_item_weight = QTableWidgetItem()
+            to_item_weight.setText(to_l[row])
+            self.weights_table.setItem(row, 1, to_item_weight)
+
+            to_item_grad = QTableWidgetItem()
+            to_item_grad.setText(to_l_grads[row])
+            self.gradients_table.setItem(row, 1, to_item_grad)
+
+            W_item = QTableWidgetItem()
+            W_item.setText(str(init_weights[row]))
+            self.weights_table.setItem(row, 2, W_item)
 
         # Grouping the label and the gradients table into a vertical layout
         gradients_label_table_layout = QVBoxLayout()
-        gradients_label_table_layout.addWidget(gradients_table_label)
-        gradients_label_table_layout.addWidget(gradients_table)
+        gradients_label_table_layout.addWidget(self.gradients_table_label)
+        gradients_label_table_layout.addWidget(self.gradients_table)
 
         # Putting all the tables created in a horizontal layout
         tablesHLayout = QHBoxLayout()
         tablesHLayout.addLayout(weights_label_table_layout)
         tablesHLayout.addLayout(gradients_label_table_layout)
-
 
         # Making a horizontal layout for the upper half of the screen
         upperHalfLayout = QHBoxLayout()
@@ -217,14 +271,12 @@ class VisualizeWindow(QWidget):
         # overallGrid.addLayout(forBackVbox, 2, 0)
         # overallGrid.addLayout(upTestVbox, 2, 1)
 
-        #overallGrid.addWidget(in_hid_weights_table, 2, 2)
+        #overallGrid.addWidget(in_hid_self.weights_table, 2, 2)
 
         overallGrid.addLayout(upperHalfLayout)
         overallGrid.addLayout(lowerHalfLayout)
 
         self.setLayout(overallGrid)
-
-    
 
     def clicked_fProp(self):
         # This function shall call the forward propagation function using the inputs and the selected weight init
@@ -235,14 +287,18 @@ class VisualizeWindow(QWidget):
 
         self.cache = cache
         A1 = cache['A1']
+        print(cache)
         for index in range(self.shallow_network.inputLayerSize):
-            self.inputNeuronLabel[index].setText(str(X[index][0]))
+            self.inputNeuronLabel[index].setText(
+                "N1"+str(index)+"-->"+str(X[index][0]))
 
         for index in range(self.shallow_network.hiddenLayerSize):
-            self.hiddenNeuronLabel[index].setText(str(A1[index][0]))
+            self.hiddenNeuronLabel[index].setText(
+                "N2"+str(index)+"-->"+str(A1[index][0]))
 
         for index in range(self.shallow_network.outputLayerSize):
-            self.outputNeuronLabel[index].setText(str(yhat[index][0]))
+            self.outputNeuronLabel[index].setText(
+                "N3"+str(index)+"-->"+str(yhat[index][0]))
 
     def clicked_bProp(self):
         # This function shall call the backward propagation function
@@ -253,13 +309,15 @@ class VisualizeWindow(QWidget):
         self.grads = self.shallow_network.backward_propagation(
             self.shallow_network.params, self.cache, X, Y)
         print(self.grads)
-        # for index in range(self.shallow_network.inputLayerSize):
-        #     self.inputNeuronLabel[index].setText(str(X[index]))
 
-        # for index in range(self.shallow_network.hiddenLayerSize):
-        #     self.hiddenNeuronLabel[index].setText(str(A1[0][index]))
+        grads_l = list(self.grads['dW2'].flat) + \
+            list(self.grads['dW1'].flat)
+        print(grads_l)
+        for row in range(len(grads_l)):
+            _item = QTableWidgetItem()
+            _item.setText(str(grads_l[row]))
+            self.gradients_table.setItem(row, 2, _item)
 
-        # for index in range(self.shallow_network.outputLayerSize):
         # self.outputNeuronLabel[index].setText(str(yhat[0][index]))
 
     def clicked_upWeights(self):
@@ -268,6 +326,15 @@ class VisualizeWindow(QWidget):
         self.shallow_network.params = self.shallow_network.update_parameters(
             self.shallow_network.params, self.grads)
         print(self.shallow_network.params)
+
+        updated_weights = list(self.shallow_network.params['W1'].flat) + \
+            list(self.shallow_network.params['W2'].flat)
+        print(updated_weights)
+        # Filling the "From" and "To" columns inside the weights table
+        for row in range(len(updated_weights)):
+            from_item_weight = QTableWidgetItem()
+            from_item_weight.setText(str(updated_weights[row]))
+            self.weights_table.setItem(row, 2, from_item_weight)
 
     def clicked_testInputs(self):
         # This function will just call the forward propagation function on the inputs using the new weights
