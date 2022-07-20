@@ -26,7 +26,7 @@ class Window(QWidget):
 
         # self.setStyleSheet('background-color:gray')
         stylesheet = (
-            'background-color:gray'
+            'background-color:#D3D3D3'
         )
         self.setStyleSheet(stylesheet)
 
@@ -59,43 +59,43 @@ class Window(QWidget):
         wInit = QLabel("Weight Init.", self)
         hidActFn = QLabel("Hidden Activation Fn.", self)
         outActFn = QLabel("Output Activation Fn", self)
-        optimizer = QLabel("Optimizer", self)
+        # optimizer = QLabel("Optimizer", self)
 
         # Styiling the labels
-        mainLabel.setStyleSheet('color:white')
+        mainLabel.setStyleSheet('color:black')
         mainLabel.setFont(QFont("Times New Roman", 20))
 
         # inNum.setGeometry(100,100,300,100)
-        inNum.setStyleSheet('color:white')
+        inNum.setStyleSheet('color:black')
         inNum.setFont(QFont("Times New Roman", 15))
 
         # hidNum.setGeometry(100,200,300,100)
-        hidNum.setStyleSheet('color:white')
+        hidNum.setStyleSheet('color:black')
         hidNum.setFont(QFont("Times New Roman", 15))
 
         # outNum.setGeometry(100,300,300,100)
-        outNum.setStyleSheet('color:white')
+        outNum.setStyleSheet('color:black')
         outNum.setFont(QFont("Times New Roman", 15))
 
         # iRate.setGeometry(100,400,300,100)
-        iRate.setStyleSheet('color:white')
+        iRate.setStyleSheet('color:black')
         iRate.setFont(QFont("Times New Roman", 15))
 
         # wInit.setGeometry(100,500,300,100)
-        wInit.setStyleSheet('color:white')
+        wInit.setStyleSheet('color:black')
         wInit.setFont(QFont("Times New Roman", 15))
 
         # hidActFn.setGeometry(100,600,300,100)
-        hidActFn.setStyleSheet('color:white')
+        hidActFn.setStyleSheet('color:black')
         hidActFn.setFont(QFont("Times New Roman", 15))
 
         # outActFn.setGeometry(100,700,300,100)
-        outActFn.setStyleSheet('color:white')
+        outActFn.setStyleSheet('color:black')
         outActFn.setFont(QFont("Times New Roman", 15))
 
         # optimizer.setGeometry(100,800,300,100)
-        optimizer.setStyleSheet('color:white')
-        optimizer.setFont(QFont("Times New Roman", 15))
+        # optimizer.setStyleSheet('color:black')
+        # optimizer.setFont(QFont("Times New Roman", 15))
 
         # Grouping labels into a Layout
         labelsVbox = QVBoxLayout()
@@ -106,7 +106,7 @@ class Window(QWidget):
         labelsVbox.addWidget(wInit)
         labelsVbox.addWidget(hidActFn)
         labelsVbox.addWidget(outActFn)
-        labelsVbox.addWidget(optimizer)
+        # labelsVbox.addWidget(optimizer)
 
         # Creating needed LineEdits
         self.inNumInput = QLineEdit(self)
@@ -126,34 +126,34 @@ class Window(QWidget):
         self.outActFnInput.addItem("RELU")
         self.outActFnInput.addItem("Sigmoid")
         self.outActFnInput.addItem("Tanh")
-        self.optimizerInput = QComboBox(self)
-        self.optimizerInput.addItem("SGD")
-        self.optimizerInput.addItem("ADAM")
+        # self.optimizerInput = QComboBox(self)
+        # self.optimizerInput.addItem("SGD")
+        # self.optimizerInput.addItem("ADAM")
 
         # Styiling LineEdits and comboxes
-        self.inNumInput.setStyleSheet('color:black')
+        self.inNumInput.setStyleSheet("border: 1px solid black")
         self.inNumInput.setFixedSize(200, 25)
 
-        self.hidNumInput.setStyleSheet('color:black')
+        self.hidNumInput.setStyleSheet("border: 1px solid black")
         self.hidNumInput.setFixedSize(200, 25)
 
-        self.outNumInput.setStyleSheet('color:black')
+        self.outNumInput.setStyleSheet("border: 1px solid black")
         self.outNumInput.setFixedSize(200, 25)
 
-        self.iRateInput.setStyleSheet('color:black')
+        self.iRateInput.setStyleSheet("border: 1px solid black")
         self.iRateInput.setFixedSize(200, 25)
 
-        self.wInitInput.setStyleSheet('color:white')
+        self.wInitInput.setStyleSheet('color:black')
         self.wInitInput.setFixedSize(200, 25)
 
-        self.hidActFnInput.setStyleSheet('color:white')
+        self.hidActFnInput.setStyleSheet('color:black')
         self.hidActFnInput.setFixedSize(200, 25)
 
-        self.outActFnInput.setStyleSheet('color:white')
+        self.outActFnInput.setStyleSheet('color:black')
         self.outActFnInput.setFixedSize(200, 25)
 
-        self.optimizerInput.setStyleSheet('color:white')
-        self.optimizerInput.setFixedSize(200, 25)
+        # self.optimizerInput.setStyleSheet('color:black')
+        # self.optimizerInput.setFixedSize(200, 25)
 
         # Grouping LineEdits and scroll bars into a Layout
         inputsVbox = QVBoxLayout()
@@ -164,7 +164,7 @@ class Window(QWidget):
         inputsVbox.addWidget(self.wInitInput)
         inputsVbox.addWidget(self.hidActFnInput)
         inputsVbox.addWidget(self.outActFnInput)
-        inputsVbox.addWidget(self.optimizerInput)
+        # inputsVbox.addWidget(self.optimizerInput)
 
         # self.setLayout(inputsVbox)
 
@@ -211,19 +211,21 @@ class Window(QWidget):
         self.wInitInputValue = self.wInitInput.currentText()
         self.hidActFnInputValue = self.hidActFnInput.currentText()
         self.outActFnInputValue = self.outActFnInput.currentText()
-        self.optimizerInputValue = self.optimizerInput.currentText()
+        # self.optimizerInputValue = self.optimizerInput.currentText()
 
         # Then move to the next window with the needed NN drawn
 
         # Tests
         print("The visualize button is clicked")
-        print(self.inNumInputValue + ", " + self.hidNumInputValue + ", " + self.outNumInputValue + ", ")
-        print(self.iRateInputValue + ", " + self.wInitInputValue + ", " +  self.hidActFnInputValue + ", ")
-        print(self.outActFnInputValue + ", " + self.optimizerInputValue + ", ")
+        print(self.inNumInputValue + ", " + self.hidNumInputValue +
+              ", " + self.outNumInputValue + ", ")
+        print(self.iRateInputValue + ", " + self.wInitInputValue +
+              ", " + self.hidActFnInputValue + ", ")
+        # print(self.outActFnInputValue + ", " + self.optimizerInputValue + ", ")
 
         shallow_network = ShallowNN(
             self.inNumInputValue, self.hidNumInputValue, self.outNumInputValue, self.iRateInputValue, self.wInitInputValue,
-                self.hidActFnInputValue, self.outActFnInputValue, self.optimizerInputValue)
+            self.hidActFnInputValue, self.outActFnInputValue, self.optimizerInputValue)
         # Open Second Window to Visualize the NN
         self.vis_window = VisualizeWindow(shallow_network)
         self.vis_window.show()

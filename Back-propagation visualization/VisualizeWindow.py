@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QLineEdit, QTableWidget, QTableWidgetItem, QHeaderView
 from PyQt5.QtGui import QIcon, QFont, QDoubleValidator, QValidator, QColor, QColorConstants
 from PyQt5.QtCore import QTimer, QEventLoop
 import numpy as np
@@ -18,17 +18,19 @@ class VisualizeWindow(QWidget):
 
         # self.setStyleSheet('background-color:gray')
         stylesheet = (
-            'background-color:gray'
+            'background-color:#bebebe'
         )
         self.setStyleSheet(stylesheet)
         self.shallow_network = shallow_network
         self.weights_table = QTableWidget()
+
         self.gradients_table = QTableWidget()
         self.cache = None
         self.grads = None
         self.from_l_grads = []
         self.to_l_grads = []
         self.labels_to_neurons = dict()
+        self.yhat = None
         self.create_widgets()
 
     def create_widgets(self):
@@ -42,6 +44,8 @@ class VisualizeWindow(QWidget):
         for index in range(numinputs):
             # Make sure to set correct parent
             self.lineEdits[index] = QLineEdit(self)
+            self.lineEdits[index].setStyleSheet(
+                "border: 1px solid black;background-color:white")
             # Use the line edit you just added
             self.lineEdits[index].setFixedSize(200, 25)
             self.lineEdits[index].move(0, 50*index)
@@ -57,6 +61,8 @@ class VisualizeWindow(QWidget):
             # Make sure to set correct parent
             self.ylineEdits[index] = QLineEdit(self)
             # Use the line edit you just added
+            self.ylineEdits[index].setStyleSheet(
+                "border: 1px solid black;background-color:white")
             self.ylineEdits[index].setFixedSize(200, 25)
             self.ylineEdits[index].move(0, 50*index)
             # group the input QlineEdits in a vertical layout
@@ -100,22 +106,21 @@ class VisualizeWindow(QWidget):
         forBackVbox.addWidget(fProp)
         forBackVbox.addWidget(bProp)
 
-        upTestVbox = QVBoxLayout()
-        upTestVbox.addWidget(upWeights)
-        upTestVbox.addWidget(testInputs)
+        # upTestVbox = QVBoxLayout()
+        forBackVbox.addWidget(upWeights)
+        forBackVbox.addWidget(testInputs)
 
         ip_neurons_names = []
         hidden_neurons_names = []
         op_neurons_names = []
         # Dynamic craetion of NN with changing text on labels of each circle
-        # numinputs = 5
         self.inputNeuronLabel = [None] * int(numinputs)
         inputNeuronsVbox = QVBoxLayout()
         for index in range(numinputs):
             self.inputNeuronLabel[index] = QLabel('', self)
             self.inputNeuronLabel[index].setFixedSize(140, 140)
             self.inputNeuronLabel[index].setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
             self.inputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             self.inputNeuronLabel[index].setText("N1"+str(index+1))
             ip_neurons_names.append("N1"+str(index+1))
@@ -132,7 +137,7 @@ class VisualizeWindow(QWidget):
             self.hiddenNeuronLabel[index] = QLabel('', self)
             self.hiddenNeuronLabel[index].setFixedSize(140, 140)
             self.hiddenNeuronLabel[index].setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
             self.hiddenNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             self.hiddenNeuronLabel[index].setText("N2"+str(index+1))
             hidden_neurons_names.append("N2"+str(index+1))
@@ -149,7 +154,7 @@ class VisualizeWindow(QWidget):
             self.outputNeuronLabel[index] = QLabel('', self)
             self.outputNeuronLabel[index].setFixedSize(140, 140)
             self.outputNeuronLabel[index].setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
             self.outputNeuronLabel[index].setFont(QFont("Times New Roman", 12))
             self.outputNeuronLabel[index].setText("N3"+str(index+1))
             op_neurons_names.append("N3"+str(index+1))
@@ -168,7 +173,7 @@ class VisualizeWindow(QWidget):
         self.weights_table.setRowCount(int(weight_table_row_size))
         self.weights_table.setColumnCount(3)
         self.weights_table_label = QLabel("Weights (W1) and (W2)")
-        self.weights_table_label.setFixedSize(500, 50)
+        # self.weights_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in weights table
         weights_headers = ["From", "To", "W"]
@@ -201,16 +206,18 @@ class VisualizeWindow(QWidget):
                 self.to_l_grads.append(ip_node)
 
         # Grouping the label and the weights table into a vertical layout
+        self.weights_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         weights_label_table_layout = QVBoxLayout()
         weights_label_table_layout.addWidget(self.weights_table_label)
         weights_label_table_layout.addWidget(self.weights_table)
 
         # Second table to show the gradients
         # self.gradients_table = QTableWidget()
+
         self.gradients_table.setRowCount(int(weight_table_row_size))
         self.gradients_table.setColumnCount(int(3))
         self.gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
-        self.gradients_table_label.setFixedSize(500, 50)
+        # self.gradients_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in gradients table
         gradients_headers = ["From", "To", "dW"]
@@ -247,6 +254,7 @@ class VisualizeWindow(QWidget):
 
         # Grouping the label and the gradients table into a vertical layout
         gradients_label_table_layout = QVBoxLayout()
+        self.gradients_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         gradients_label_table_layout.addWidget(self.gradients_table_label)
         gradients_label_table_layout.addWidget(self.gradients_table)
 
@@ -266,19 +274,9 @@ class VisualizeWindow(QWidget):
         # Making a horizontal layout for the lower half of the screen
         lowerHalfLayout = QHBoxLayout()
         lowerHalfLayout.addLayout(forBackVbox)
-        lowerHalfLayout.addLayout(upTestVbox)
         lowerHalfLayout.addLayout(tablesHLayout)
 
         overallGrid = QVBoxLayout()
-        # overallGrid.addLayout(lineEditsVbox, 0, 0)
-        # overallGrid.addLayout(ylineEditsVbox, 0, 1)
-        # overallGrid.addLayout(inputNeuronsVbox, 0, 2)
-        # overallGrid.addLayout(hiddenNeuronsVbox, 0, 3)
-        # overallGrid.addLayout(outputNeuronsVbox, 0, 4)
-        # overallGrid.addLayout(forBackVbox, 2, 0)
-        # overallGrid.addLayout(upTestVbox, 2, 1)
-
-        #overallGrid.addWidget(in_hid_self.weights_table, 2, 2)
 
         overallGrid.addLayout(upperHalfLayout)
         overallGrid.addLayout(lowerHalfLayout)
@@ -293,6 +291,7 @@ class VisualizeWindow(QWidget):
             X, self.shallow_network.params, self.shallow_network.hidden_act_type, self.shallow_network.op_act_type)
 
         self.cache = cache
+        self.yhat = yhat
         A1 = cache['A1']
         print(cache)
         # for index in range(self.shallow_network.inputLayerSize):
@@ -369,9 +368,9 @@ class VisualizeWindow(QWidget):
                 QColorConstants.Transparent)
 
             from_item.setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
             to_item.setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
 
         # self.outputNeuronLabel[index].setText(str(yhat[0][index]))
 
@@ -435,9 +434,9 @@ class VisualizeWindow(QWidget):
                 QColorConstants.Transparent)
 
             from_item.setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
             to_item.setStyleSheet(
-                "border: 3px solid black;border-radius: 40px;background-color:blue")
+                "border: 3px solid black;border-radius: 40px;background-color:#0096FF")
 
     def clicked_testInputs(self):
         # This function will just call the forward propagation function on the inputs using the new weights
