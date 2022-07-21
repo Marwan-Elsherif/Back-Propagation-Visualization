@@ -102,13 +102,16 @@ class VisualizeWindow(QWidget):
         testInputs.setStyleSheet('background-color:white')
         testInputs.setFixedSize(200, 25)
 
+        # Creating Label to show yhat in case "Test Inputs" was clicked
+        self.yhatLabel = QLabel("", self)
+        self.yhatLabel.setFixedSize(200, 25)
+        
         forBackVbox = QVBoxLayout()
         forBackVbox.addWidget(fProp)
         forBackVbox.addWidget(bProp)
-
-        # upTestVbox = QVBoxLayout()
         forBackVbox.addWidget(upWeights)
         forBackVbox.addWidget(testInputs)
+        forBackVbox.addWidget(self.yhatLabel)
 
         ip_neurons_names = []
         hidden_neurons_names = []
@@ -441,7 +444,19 @@ class VisualizeWindow(QWidget):
     def clicked_testInputs(self):
         # This function will just call the forward propagation function on the inputs using the new weights
         # and just show the output
-        pass
+        X = self.get_X()
+        yhat, cache = self.shallow_network.forward_propagation(
+            X, self.shallow_network.params, self.shallow_network.hidden_act_type, self.shallow_network.op_act_type)
+
+        self.cache = cache
+        self.yhat = yhat
+        A1 = cache['A1']
+
+        # Styling and Showing the value of yhat in the label created below "Test inputs" button
+        self.yhatLabel.setStyleSheet('background-color:white')
+        self.yhatLabel.setText("Yhat is " + str(yhat))
+
+
 
     def get_X(self):
         ip_array = np.zeros(shape=(self.shallow_network.inputLayerSize, 1))
