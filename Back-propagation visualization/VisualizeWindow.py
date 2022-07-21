@@ -39,7 +39,8 @@ class VisualizeWindow(QWidget):
         self.lineEdits = [None] * int(numinputs)
         lineEditsVbox = QVBoxLayout()
         x_header = QLabel("Inputs")
-        x_header.setFixedSize(50, 50)
+        x_header.setFixedSize(100, 100)
+        x_header.setFont(QFont("Times New Roman", 18))
         lineEditsVbox.addWidget(x_header)
         for index in range(numinputs):
             # Make sure to set correct parent
@@ -52,11 +53,32 @@ class VisualizeWindow(QWidget):
             # group the input QlineEdits in a vertical layout
             lineEditsVbox.addWidget(self.lineEdits[index])
 
-        self.ylineEdits = [None] * int(numinputs)
-        ylineEditsVbox = QVBoxLayout()
-        y_header = QLabel("True Ys")
-        y_header.setFixedSize(50, 50)
-        ylineEditsVbox.addWidget(y_header)
+        # Creating the label for the "True Y" 
+        y_header = QLabel("True Y")
+
+        # Styling the "True Y" label
+        y_header.setFixedSize(100, 100)
+        y_header.setFont(QFont("Times New Roman", 18))
+        
+        
+        # Creating the qlineEdit for the "True Y"
+        self.ylineEdits = QLineEdit(self)
+        # Styling the qlineEdit for the "True Y" 
+        self.ylineEdits.setStyleSheet(
+                "border: 1px solid black;background-color:white")
+        self.ylineEdits.setFixedSize(200, 25)
+        self.ylineEdits.move(0, 50*index)
+
+        # group the input QlineEdits in a vertical layout
+        ylineheaderVbox = QVBoxLayout()
+        ylineeditVbox = QVBoxLayout()
+        ylineheaderVbox.addWidget(y_header)
+        ylineeditVbox.addWidget(self.ylineEdits)
+        ylineHbox = QHBoxLayout()
+        ylineHbox.addLayout(ylineheaderVbox)
+        ylineHbox.addLayout(ylineeditVbox)
+
+        '''
         for index in range(1):
             # Make sure to set correct parent
             self.ylineEdits[index] = QLineEdit(self)
@@ -67,6 +89,7 @@ class VisualizeWindow(QWidget):
             self.ylineEdits[index].move(0, 50*index)
             # group the input QlineEdits in a vertical layout
             ylineEditsVbox.addWidget(self.ylineEdits[index])
+        '''
 
         # Craete the 4 buttons we need "Forward Prop.", "Backward Prop.", "Update Werights" and "Test Inputs"
 
@@ -76,7 +99,8 @@ class VisualizeWindow(QWidget):
 
         # Stylying Forward Prop. button
         fProp.setStyleSheet('background-color:white')
-        fProp.setFixedSize(200, 25)
+        fProp.setFixedSize(210, 50)
+        fProp.setFont(QFont("Times New Roman", 15))
 
         # Craeting Backward Prop. button
         bProp = QPushButton("Backward Prop.", self)
@@ -84,7 +108,8 @@ class VisualizeWindow(QWidget):
 
         # Stylying Backward Prop.Backward Prop. button
         bProp.setStyleSheet('background-color:white')
-        bProp.setFixedSize(200, 25)
+        bProp.setFixedSize(210, 50)
+        bProp.setFont(QFont("Times New Roman", 15))
 
         # Craeting Update Werights button
         upWeights = QPushButton("Update Werights", self)
@@ -92,7 +117,8 @@ class VisualizeWindow(QWidget):
 
         # Stylying Update Werights button
         upWeights.setStyleSheet('background-color:white')
-        upWeights.setFixedSize(200, 25)
+        upWeights.setFixedSize(210, 50)
+        upWeights.setFont(QFont("Times New Roman", 15))
 
         # Craeting Test Inputs button
         testInputs = QPushButton("Test Inputs", self)
@@ -100,11 +126,12 @@ class VisualizeWindow(QWidget):
 
         # Stylying Test Inputs button
         testInputs.setStyleSheet('background-color:white')
-        testInputs.setFixedSize(200, 25)
+        testInputs.setFixedSize(210, 50)
+        testInputs.setFont(QFont("Times New Roman", 15))
 
         # Creating Label to show yhat in case "Test Inputs" was clicked
         self.yhatLabel = QLabel("", self)
-        self.yhatLabel.setFixedSize(200, 25)
+        self.yhatLabel.setFixedSize(210, 50)
         
         forBackVbox = QVBoxLayout()
         forBackVbox.addWidget(fProp)
@@ -176,6 +203,7 @@ class VisualizeWindow(QWidget):
         self.weights_table.setRowCount(int(weight_table_row_size))
         self.weights_table.setColumnCount(3)
         self.weights_table_label = QLabel("Weights (W1) and (W2)")
+        self.weights_table_label.setFont(QFont("Times New Roman", 15))
         # self.weights_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in weights table
@@ -183,6 +211,7 @@ class VisualizeWindow(QWidget):
         for col in range(3):
             hitem = QTableWidgetItem()
             hitem.setText(weights_headers[col])
+            hitem.setFont(QFont("Times New Roman", 14))
             self.weights_table.setHorizontalHeaderItem(col, hitem)
 
         from_l = []
@@ -220,6 +249,7 @@ class VisualizeWindow(QWidget):
         self.gradients_table.setRowCount(int(weight_table_row_size))
         self.gradients_table.setColumnCount(int(3))
         self.gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
+        self.gradients_table_label.setFont(QFont("Times New Roman", 15))
         # self.gradients_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in gradients table
@@ -227,6 +257,7 @@ class VisualizeWindow(QWidget):
         for col in range(3):
             hitem = QTableWidgetItem()
             hitem.setText(gradients_headers[col])
+            hitem.setFont(QFont("Times New Roman", 14))
             self.gradients_table.setHorizontalHeaderItem(col, hitem)
 
         init_weights = list(self.shallow_network.params['W1'].flat) + \
@@ -268,8 +299,8 @@ class VisualizeWindow(QWidget):
 
         # Making a horizontal layout for the upper half of the screen
         upperHalfLayout = QHBoxLayout()
-        upperHalfLayout.addLayout(lineEditsVbox,)
-        upperHalfLayout.addLayout(ylineEditsVbox)
+        upperHalfLayout.addLayout(lineEditsVbox)
+        upperHalfLayout.addLayout(ylineHbox)
         upperHalfLayout.addLayout(inputNeuronsVbox)
         upperHalfLayout.addLayout(hiddenNeuronsVbox)
         upperHalfLayout.addLayout(outputNeuronsVbox)
@@ -455,6 +486,7 @@ class VisualizeWindow(QWidget):
         # Styling and Showing the value of yhat in the label created below "Test inputs" button
         self.yhatLabel.setStyleSheet('background-color:white')
         self.yhatLabel.setText("Yhat is " + str(yhat))
+        self.yhatLabel.setFont(QFont("Times New Roman", 15))
 
 
 

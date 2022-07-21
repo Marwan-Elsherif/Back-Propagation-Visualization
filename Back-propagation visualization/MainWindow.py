@@ -20,11 +20,10 @@ class Window(QWidget):
         self.setWindowTitle("Shallow NN Visualizer")
         # self.setWindowIcon(QIcon("myapp.png"))
 
-        # self.setFixedHeight(1200)
-        # self.setFixedWidth(1500)
-        self.setGeometry(500, 300, 400, 300)
+        self.setFixedHeight(500)
+        self.setFixedWidth(900)
+        # self.setGeometry(500, 300, 400, 300)
 
-        # self.setStyleSheet('background-color:gray')
         stylesheet = (
             'background-color:#D3D3D3'
         )
@@ -40,7 +39,8 @@ class Window(QWidget):
         # visBtn.move(100,100)
         visBtn.setGeometry(1200, 500, 200, 100)
         visBtn.setStyleSheet('background-color:white')
-        visBtn.setFixedSize(200, 25)
+        visBtn.setFixedSize(250, 50)
+        visBtn.setFont(QFont("Times New Roman", 20))
         # visBtn.setIcon(QIcon("whatever.png"))
 
         # Putting Visualize button into a layout
@@ -228,4 +228,4 @@ class Window(QWidget):
             self.hidActFnInputValue, self.outActFnInputValue, self.optimizerInputValue)
         # Open Second Window to Visualize the NN
         self.vis_window = VisualizeWindow(shallow_network)
-        self.vis_window.show()
+        self.vis_window.showMaximized()
