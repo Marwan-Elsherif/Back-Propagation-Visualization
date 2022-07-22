@@ -4,7 +4,7 @@
 
 This project is aiming to visualize backpropagation in shallow neural networks, and to show which neurons fire at testing time.
 There are two main windows, the first window is shown below, it is responsible for collecting the input from the user in order to build the neural network.
-![alt text](assets/window1.png "Main Window")
+![alt text](assets/window1.png "Main Window") <br>
 After you input the needed values and choose the right options, click the Visualize button to take you to the next window so you can visualize the network.
 ![alt text](assets/window2_init.png "Visualize Window")
 In this window, you should be able to enter the neural network's input values and define the True label.
