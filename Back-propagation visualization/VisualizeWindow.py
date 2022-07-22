@@ -194,16 +194,13 @@ class VisualizeWindow(QWidget):
             outputNeuronsVbox.addWidget(self.outputNeuronLabel[index])
 
         # Craeting tables to show the values of the weights and the gradients
-
         # First empty table to show the weights
-        # self.weights_table = QTableWidget()
         weight_table_row_size = (numhidden * numinputs) + \
             (numoutputs * numhidden)
         self.weights_table.setRowCount(int(weight_table_row_size))
         self.weights_table.setColumnCount(3)
         self.weights_table_label = QLabel("Weights (W1) and (W2)")
         self.weights_table_label.setFont(QFont("Times New Roman", 15))
-        # self.weights_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in weights table
         weights_headers = ["From", "To", "W"]
@@ -243,13 +240,10 @@ class VisualizeWindow(QWidget):
         weights_label_table_layout.addWidget(self.weights_table)
 
         # Second table to show the gradients
-        # self.gradients_table = QTableWidget()
-
         self.gradients_table.setRowCount(int(weight_table_row_size))
         self.gradients_table.setColumnCount(int(3))
         self.gradients_table_label = QLabel("Gradients (dW1) and (dw2)")
         self.gradients_table_label.setFont(QFont("Times New Roman", 15))
-        # self.gradients_table_label.setFixedSize(500, 50)
 
         # Change the headers of columns in gradients table
         gradients_headers = ["From", "To", "dW"]
