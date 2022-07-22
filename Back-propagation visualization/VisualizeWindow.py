@@ -53,19 +53,18 @@ class VisualizeWindow(QWidget):
             # group the input QlineEdits in a vertical layout
             lineEditsVbox.addWidget(self.lineEdits[index])
 
-        # Creating the label for the "True Y" 
+        # Creating the label for the "True Y"
         y_header = QLabel("True Y")
 
         # Styling the "True Y" label
         y_header.setFixedSize(100, 100)
         y_header.setFont(QFont("Times New Roman", 18))
-        
-        
+
         # Creating the qlineEdit for the "True Y"
         self.ylineEdits = QLineEdit(self)
-        # Styling the qlineEdit for the "True Y" 
+        # Styling the qlineEdit for the "True Y"
         self.ylineEdits.setStyleSheet(
-                "border: 1px solid black;background-color:white")
+            "border: 1px solid black;background-color:white")
         self.ylineEdits.setFixedSize(200, 25)
         self.ylineEdits.move(0, 50*index)
 
@@ -132,7 +131,7 @@ class VisualizeWindow(QWidget):
         # Creating Label to show yhat in case "Test Inputs" was clicked
         self.yhatLabel = QLabel("", self)
         self.yhatLabel.setFixedSize(210, 50)
-        
+
         forBackVbox = QVBoxLayout()
         forBackVbox.addWidget(fProp)
         forBackVbox.addWidget(bProp)
@@ -488,8 +487,6 @@ class VisualizeWindow(QWidget):
         self.yhatLabel.setText("Yhat is " + str(yhat))
         self.yhatLabel.setFont(QFont("Times New Roman", 15))
 
-
-
     def get_X(self):
         ip_array = np.zeros(shape=(self.shallow_network.inputLayerSize, 1))
         for index in range(self.shallow_network.inputLayerSize):
@@ -499,6 +496,6 @@ class VisualizeWindow(QWidget):
     def get_true_Y(self):
         ip_array = np.zeros(shape=(1, 1))
         for index in range(1):
-            ip_array[index] = float(self.ylineEdits[index].text())
+            ip_array[index] = float(self.ylineEdits.text())
         print(ip_array)
         return ip_array
